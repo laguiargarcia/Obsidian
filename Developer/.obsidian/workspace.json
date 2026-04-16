@@ -11,10 +11,14 @@
             "id": "5ddd634758bf10e3",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "GetFinance/arquitetura.md",
+                "mode": "preview",
+                "source": true
+              },
               "icon": "lucide-file",
-              "title": "Nova aba"
+              "title": "arquitetura"
             }
           }
         ]
@@ -163,19 +167,22 @@
       "bases:Criar nova base": false
     }
   },
-  "active": "a4563e9c0d90f6b7",
+  "active": "5ddd634758bf10e3",
   "lastOpenFiles": [
+    "GetFinance/arquitetura.md.tmp.35405.1776364300843",
+    "GetFinance/index.md.tmp.35405.1776364232547",
     "GetFinance/referencias.md",
-    "GetFinance/referencias.md.tmp.22176.1776349016641",
     "GetFinance/arquitetura.md",
-    "GetFinance/arquitetura.md.tmp.22176.1776349010714",
     "GetFinance/index.md",
+    "GetFinance/index.md.tmp.22176.1776349814150",
+    "GetFinance/Pluggy.md",
+    "GetFinance/referencias.md.tmp.22176.1776349016641",
+    "GetFinance/arquitetura.md.tmp.22176.1776349010714",
     "GetFinance/index.md.tmp.22176.1776349000703",
     "Python/Dependencias.md",
     "Python/GTK.md",
     "Git/Comandos.md",
     "Python/Ambiente Virtual Python (venv).md",
-    "GetFinance/Pluggy.md",
     "Git/GitHub CLI (Remoto).md",
     "GetFinance",
     "Git/Bash's.md",
@@ -188,8 +195,6 @@
     "Python",
     "AirFlow",
     "Images",
-    "Depuração Remota",
-    "Welcome.md",
-    "Git"
+    "Welcome.md"
   ]
 }
