@@ -15,7 +15,7 @@ Pipeline ETL em Python que busca dados financeiros da API Pluggy.ai (open bankin
 ## Status
 <!-- AUTO -->
 Projeto em desenvolvimento inicial. Commits recentes:
-- `e15b777` Add project source files and CLAUDE.md documentation
+- `8073271` Add project source files and documentation
 - `a989d56` initial commit
 
 ## Minhas Notas
