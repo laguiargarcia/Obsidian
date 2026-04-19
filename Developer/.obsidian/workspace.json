@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "GetFinance/arquitetura.md",
+                "file": "GetFinance/referencias.md",
                 "mode": "preview",
                 "source": true
               },
               "icon": "lucide-file",
-              "title": "arquitetura"
+              "title": "referencias"
             }
           }
         ]
@@ -169,11 +169,11 @@
   },
   "active": "5ddd634758bf10e3",
   "lastOpenFiles": [
+    "GetFinance/index.md",
+    "GetFinance/arquitetura.md",
+    "GetFinance/referencias.md",
     "GetFinance/arquitetura.md.tmp.35405.1776364300843",
     "GetFinance/index.md.tmp.35405.1776364232547",
-    "GetFinance/referencias.md",
-    "GetFinance/arquitetura.md",
-    "GetFinance/index.md",
     "GetFinance/index.md.tmp.22176.1776349814150",
     "GetFinance/Pluggy.md",
     "GetFinance/referencias.md.tmp.22176.1776349016641",
@@ -194,7 +194,6 @@
     "Depuração Remota/Comandos.md",
     "Python",
     "AirFlow",
-    "Images",
     "Welcome.md"
   ]
 }

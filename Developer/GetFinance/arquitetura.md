@@ -2,33 +2,70 @@
 
 ## Como Funciona
 <!-- AUTO: atualizado pelo /obsidian -->
-O pipeline usa um padrão de **code injection**: `main.py` concatena `functions.py` e `storage.py` como texto antes de cada script ETL, e executa via `subprocess.run`. Scripts em `etl/` usam tudo de `functions.py` e `storage.py` sem importar explicitamente. SQLAlchemy foi removido — armazenamento migrado para Delta Lake.
+Pipeline de notebooks Jupyter em camadas. `ingestion/main.ipynb` orquestra a busca de dados da Pluggy API. ETL processa em 3 passos: landing → raw → cleansed → curated. FastAPI expõe os dados cleansed via DuckDB. Superset conecta ao mesmo DuckDB para dashboards interativos.
+
+## Estrutura de Pastas
+<!-- AUTO -->
+```
+GetFinance/
+├── ingestion/          ← main.ipynb, functions.ipynb (Pluggy fetch + SparkSession)
+├── etl/                ← notebooks ETL em camadas
+│   ├── landing2raw.ipynb
+│   ├── raw2cleansed.ipynb
+│   └── cleansed2curated.ipynb
+├── data/               ← Delta Lake storage
+│   ├── raw/
+│   ├── cleansed/
+│   │   ├── transactions/
+│   │   └── accounts/
+│   └── getfinance.duckdb   ← DuckDB com views sobre Delta tables
+├── api/                ← FastAPI (api.py)
+├── infra/              ← Docker Compose (Superset + FastAPI)
+│   ├── docker-compose.yml
+│   ├── superset/
+│   └── fastapi/
+├── scripts/            ← utilitários (init_duckdb_container.py)
+├── frontend/           ← scaffold (futuro)
+├── exports/            ← arquivos exportados pela API
+└── docs/
+```
 
 ## Componentes
 <!-- AUTO -->
 | Arquivo | Papel |
 |---|---|
-| `main.py` | Runner do pipeline — valida arquivos, injeta base scripts, executa cada ETL |
-| `functions.py` | Cliente Pluggy API — cache de token (TTL 2h), listagem de contas/transações, SparkSession |
-| `storage.py` | Helpers Delta Lake — `write_delta(df, path, mode)` e `read_delta(path)` |
-| `etl/raw2raw.py` | ETL passo 1 — busca contas e transações da API, salva em Delta (raw) |
-| `etl/raw2cleansed.py` | ETL passo 2 — lê raw, aplica type casting e snake_case, salva em Delta (cleansed) |
-| `etl/cleansed2curated.py` | ETL passo 3 — placeholder, transformação cleansed → curated |
+| `ingestion/main.ipynb` | Orquestra busca de dados Pluggy |
+| `ingestion/functions.ipynb` | Cliente Pluggy API — token cache (TTL 2h), SparkSession |
+| `etl/landing2raw.ipynb` | Ingestão raw → Delta Lake |
+| `etl/raw2cleansed.ipynb` | Limpeza: snake_case, type casting, DateType |
+| `etl/cleansed2curated.ipynb` | Transformações finais (placeholder) |
+| `api/api.py` | FastAPI — endpoints `/transactions`, `/accounts`, `/categories` |
+| `infra/docker-compose.yml` | Sobe Superset + FastAPI em Docker |
+| `scripts/init_duckdb_container.py` | Cria views DuckDB dentro do container Superset |
 
 ## Fluxo do Pipeline
 <!-- AUTO -->
 ```
-main.py
-  → injeta functions.py + storage.py em cada script ETL
-  → subprocess.run(python -c "<combined_code>")
-  → etl/raw2raw.py       → Pluggy API → Delta (raw)
-  → etl/raw2cleansed.py  → Delta (raw) → Delta (cleansed)
-  → etl/cleansed2curated.py → Delta (cleansed) → Delta (curated)
+Pluggy API
+  → ingestion/main.ipynb
+  → etl/landing2raw.ipynb     → data/raw/
+  → etl/raw2cleansed.ipynb    → data/cleansed/transactions + accounts
+  → etl/cleansed2curated.ipynb → (futuro)
+
+data/cleansed/
+  → DuckDB (delta extension) → views: transactions, accounts
+  → FastAPI /transactions /accounts /categories  (export CSV/JSON/Excel)
+  → Superset (Docker)        → dashboards interativos
 ```
+
+## DuckDB + Delta Lake
+<!-- AUTO -->
+`api/api.py` usa `duckdb.connect()` in-memory + `LOAD delta` para ler Delta tables diretamente via `delta_scan()`. O arquivo `data/getfinance.duckdb` é persistente e contém views criadas pelo script `init_duckdb_container.py` — usado pelo Superset.
+
+Conexão Superset: `duckdb:////app/data/getfinance.duckdb`
 
 ## Decisões Técnicas
 <!-- MANUAL: edite livremente -->
 
 ## TODO / Próximos Passos
 <!-- MANUAL -->
-
