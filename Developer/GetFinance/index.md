@@ -43,34 +43,46 @@ Superset sendo configurado via Docker Compose — conectando ao DuckDB com delta
 ## Como Rodar
 <!-- AUTO -->
 
-### Pré-requisitos
-- `.env` na raiz com `CLIENT_ID`, `CLIENT_SECRET`, `ITEM_IDS`
-- `venv` criado: `pip install -r requirements.txt`
-- Docker instalado (para Superset/FastAPI)
-
-### Pipeline ETL (Jupyter)
-Rodar os notebooks em ordem:
-```
-1. ingestion/main.ipynb         ← busca dados da Pluggy API
-2. etl/landing2raw.ipynb        ← ingestão → Delta Lake raw
-3. etl/raw2cleansed.ipynb       ← limpeza → Delta Lake cleansed
-4. etl/cleansed2curated.ipynb   ← transformações finais
-```
-
-### Serviços (Docker)
+### Setup (primeira vez)
 ```bash
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+Criar `.env` na raiz:
+```
+CLIENT_ID=<pluggy client id>
+CLIENT_SECRET=<pluggy client secret>
+ITEM_IDS=<comma-separated pluggy item ids>
+```
+
+### 1. Pipeline (buscar dados)
+```bash
+cd ingestion
+jupyter nbconvert --to notebook --execute --inplace main.ipynb
+```
+Busca contas e transações da Pluggy → grava Delta Lake em `etl/data/`.
+
+### 2. API
+```bash
+# local
+uvicorn api.api:app --reload
+
+# ou via Docker (FastAPI + Superset)
 cd infra && sudo docker compose up -d
-# Superset:  http://localhost:8088
-# FastAPI:   http://localhost:8000
+# FastAPI:  http://localhost:8000
+# Superset: http://localhost:8088
 ```
 
-### Primeira vez (setup Superset)
+### 3. Frontend
 ```bash
-sudo docker compose cp ../scripts/init_duckdb_container.py superset:/tmp/init.py
-sudo docker compose exec superset superset db upgrade
-sudo docker compose exec superset superset init
-sudo docker compose exec superset python3 /tmp/init.py
+cd frontend
+npm install   # primeira vez
+npm run dev
 ```
+Acesse: `http://localhost:3000`
+
+> "Atualizar dados" no navbar re-executa o pipeline completo.
 
 ## Minhas Notas
 <!-- MANUAL: edite livremente -->
