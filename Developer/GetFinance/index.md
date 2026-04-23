@@ -40,5 +40,37 @@ Desenvolvimento ativo. Commits recentes:
 
 Superset sendo configurado via Docker Compose — conectando ao DuckDB com delta extension.
 
+## Como Rodar
+<!-- AUTO -->
+
+### Pré-requisitos
+- `.env` na raiz com `CLIENT_ID`, `CLIENT_SECRET`, `ITEM_IDS`
+- `venv` criado: `pip install -r requirements.txt`
+- Docker instalado (para Superset/FastAPI)
+
+### Pipeline ETL (Jupyter)
+Rodar os notebooks em ordem:
+```
+1. ingestion/main.ipynb         ← busca dados da Pluggy API
+2. etl/landing2raw.ipynb        ← ingestão → Delta Lake raw
+3. etl/raw2cleansed.ipynb       ← limpeza → Delta Lake cleansed
+4. etl/cleansed2curated.ipynb   ← transformações finais
+```
+
+### Serviços (Docker)
+```bash
+cd infra && sudo docker compose up -d
+# Superset:  http://localhost:8088
+# FastAPI:   http://localhost:8000
+```
+
+### Primeira vez (setup Superset)
+```bash
+sudo docker compose cp ../scripts/init_duckdb_container.py superset:/tmp/init.py
+sudo docker compose exec superset superset db upgrade
+sudo docker compose exec superset superset init
+sudo docker compose exec superset python3 /tmp/init.py
+```
+
 ## Minhas Notas
 <!-- MANUAL: edite livremente -->
